@@ -1,724 +1,1062 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa" dir="rtl" data-theme="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ربات‌ساز روبیکا</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ربات‌ساز روبیکا ✦ استودیو</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   ✦ RUBIKA BOT STUDIO — Fashion Edition
+   Dark-luxe glassmorphism · RTL · Vazirmatn
+   ============================================================ */
+:root{
+  --font:'Vazirmatn',Tahoma,Arial,sans-serif;
+  --bg:#060913;
+  --bg2:#0b1122;
+  --glass:rgba(255,255,255,.055);
+  --glass2:rgba(255,255,255,.09);
+  --stroke:rgba(255,255,255,.12);
+  --text:#f2f5ff;
+  --muted:#9aa6c7;
+  --accent1:#8b5cf6;
+  --accent2:#22d3ee;
+  --accent3:#f472b6;
+  --gold:#fbbf24;
+  --green:#34d399;
+  --red:#fb7185;
+  --grad:linear-gradient(135deg,#8b5cf6,#22d3ee);
+  --grad2:linear-gradient(135deg,#f472b6,#fbbf24);
+  --shadow:0 20px 60px rgba(0,0,0,.5);
+  --radius:22px;
+  --input-bg:rgba(0,0,0,.35);
+}
+[data-theme="light"]{
+  --bg:#eef1fb;
+  --bg2:#f8faff;
+  --glass:rgba(255,255,255,.75);
+  --glass2:rgba(255,255,255,.95);
+  --stroke:rgba(30,41,82,.12);
+  --text:#141b36;
+  --muted:#5b6689;
+  --input-bg:rgba(255,255,255,.9);
+  --shadow:0 20px 50px rgba(80,90,180,.18);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;font-family:var(--font);color:var(--text);
+  background:var(--bg);min-height:100vh;overflow-x:hidden;
+  transition:background .4s,color .4s;
+}
+/* ---------- animated background ---------- */
+.bg-stage{position:fixed;inset:0;z-index:-1;overflow:hidden;background:var(--bg)}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;animation:drift 18s ease-in-out infinite alternate}
+.blob.b1{width:480px;height:480px;background:radial-gradient(circle,#8b5cf6,transparent 70%);top:-140px;right:-120px}
+.blob.b2{width:420px;height:420px;background:radial-gradient(circle,#22d3ee,transparent 70%);bottom:-140px;left:-100px;animation-delay:-6s}
+.blob.b3{width:340px;height:340px;background:radial-gradient(circle,#f472b6,transparent 70%);top:38%;left:32%;animation-delay:-12s;opacity:.35}
+[data-theme="light"] .blob{opacity:.35}
+@keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(-60px,50px) scale(1.15)}}
+.grain{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.06) 1px,transparent 1px);background-size:26px 26px}
+[data-theme="light"] .grain{background-image:radial-gradient(rgba(20,27,54,.07) 1px,transparent 1px)}
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+/* ---------- layout ---------- */
+.wrap{width:min(1180px,94%);margin:0 auto;padding:26px 0 60px}
+.topbar{
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  background:var(--glass);border:1px solid var(--stroke);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-radius:var(--radius);padding:14px 18px;box-shadow:var(--shadow);
+  animation:rise .6s ease both;
+}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{
+  width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font-size:26px;
+  background:var(--grad);box-shadow:0 8px 24px rgba(139,92,246,.5);
+  animation:float 4s ease-in-out infinite;
+}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-5px) rotate(3deg)}}
+.brand h1{margin:0;font-size:20px;font-weight:900}
+.brand h1 .spark{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand small{color:var(--muted);font-size:12px}
+.top-actions{margin-inline-start:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.pill{
+  display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;
+  padding:9px 16px;border-radius:999px;border:1px solid var(--stroke);
+  background:var(--glass);
+}
+.dot{width:10px;height:10px;border-radius:50%;background:#64748b;box-shadow:0 0 0 0 rgba(52,211,153,.6)}
+.dot.on{background:var(--green);animation:pulse 1.8s infinite}
+.dot.off{background:var(--red)}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(52,211,153,.55)}70%{box-shadow:0 0 0 12px rgba(52,211,153,0)}100%{box-shadow:0 0 0 0 rgba(52,211,153,0)}}
 
-    body {
-      margin: 0;
-      font-family: Tahoma, Arial, sans-serif;
-      background: linear-gradient(135deg, #eef2ff, #f8fafc);
-      color: #172033;
-    }
+.hero{
+  margin:22px 0;text-align:center;padding:44px 24px;border-radius:28px;position:relative;overflow:hidden;
+  background:linear-gradient(135deg,rgba(139,92,246,.22),rgba(34,211,238,.12)),var(--glass);
+  border:1px solid var(--stroke);backdrop-filter:blur(20px);box-shadow:var(--shadow);
+  animation:rise .7s ease both;
+}
+.hero::after{content:'';position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.09) 50%,transparent 70%);background-size:220% 100%;animation:shine 6s linear infinite;pointer-events:none}
+@keyframes shine{from{background-position:200% 0}to{background-position:-120% 0}}
+.hero h2{margin:0 0 8px;font-size:clamp(24px,4vw,40px);font-weight:900}
+.hero h2 em{font-style:normal;background:var(--grad2);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{margin:0;color:var(--muted);font-size:15px}
+.hero-badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+.badge{font-size:12px;font-weight:700;padding:7px 14px;border-radius:999px;background:rgba(139,92,246,.16);border:1px solid rgba(139,92,246,.4)}
+.badge.cyan{background:rgba(34,211,238,.12);border-color:rgba(34,211,238,.4)}
+.badge.pink{background:rgba(244,114,182,.12);border-color:rgba(244,114,182,.4)}
+.badge.gold{background:rgba(251,191,36,.12);border-color:rgba(251,191,36,.45)}
 
-    .container {
-      width: min(950px, 94%);
-      margin: 40px auto;
-    }
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 
-    .header {
-      background: white;
-      border-radius: 24px;
-      padding: 30px;
-      text-align: center;
-      box-shadow: 0 12px 35px rgba(0,0,0,.08);
-      margin-bottom: 20px;
-    }
+/* ---------- cards & grid ---------- */
+.card{
+  background:var(--glass);border:1px solid var(--stroke);border-radius:var(--radius);
+  padding:24px;box-shadow:var(--shadow);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  margin-bottom:20px;animation:rise .7s ease both;
+}
+.card h2{margin:0 0 4px;font-size:19px;font-weight:800}
+.card .sub{color:var(--muted);font-size:13px;margin:0 0 16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}.grid4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.grid3{grid-template-columns:1fr}.grid4{grid-template-columns:1fr 1fr}}
 
-    .header h1 {
-      margin: 0 0 10px;
-      font-size: 32px;
-    }
+/* ---------- stats ---------- */
+.stat{
+  position:relative;overflow:hidden;border-radius:18px;padding:18px 16px;text-align:center;
+  background:var(--glass);border:1px solid var(--stroke);backdrop-filter:blur(14px);
+  transition:transform .25s;
+}
+.stat:hover{transform:translateY(-4px)}
+.stat .num{font-size:30px;font-weight:900;line-height:1.2}
+.stat .lbl{font-size:12.5px;color:var(--muted);margin-top:4px}
+.stat .ico{font-size:22px}
+.stat.v .num{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.stat.g .num{color:var(--green)}
+.stat.p .num{color:var(--accent3)}
+.stat.y .num{color:var(--gold)}
 
-    .header p {
-      color: #667085;
-      margin: 0;
-    }
+/* ---------- forms ---------- */
+label.lbl{display:block;font-weight:700;margin:14px 0 7px;font-size:14px}
+.hint{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.9}
+input[type=text],input[type=password],input[type=number],textarea,select{
+  width:100%;border:1px solid var(--stroke);border-radius:13px;padding:12px 14px;
+  font-family:inherit;font-size:14px;color:var(--text);background:var(--input-bg);
+  outline:none;transition:.2s;
+}
+input:focus,textarea:focus,select:focus{border-color:var(--accent1);box-shadow:0 0 0 3px rgba(139,92,246,.18)}
+textarea{min-height:110px;resize:vertical;line-height:2}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row>*{flex:1;min-width:140px}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+button,.btn{
+  border:0;border-radius:13px;padding:12px 20px;font-family:inherit;font-size:14px;font-weight:800;
+  cursor:pointer;transition:.22s;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  color:#fff;background:var(--grad);box-shadow:0 8px 22px rgba(139,92,246,.35);position:relative;
+}
+button:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 12px 28px rgba(139,92,246,.5)}
+button:disabled{opacity:.55;cursor:wait;transform:none}
+.btn.green{background:linear-gradient(135deg,#10b981,#22d3ee);box-shadow:0 8px 22px rgba(16,185,129,.35)}
+.btn.danger{background:linear-gradient(135deg,#f43f5e,#fb7185);box-shadow:0 8px 22px rgba(244,63,94,.35)}
+.btn.gold{background:linear-gradient(135deg,#f59e0b,#fbbf24);box-shadow:0 8px 22px rgba(245,158,11,.35);color:#221a03}
+.btn.ghost{background:var(--glass2);color:var(--text);border:1px solid var(--stroke);box-shadow:none}
+.btn.sm{padding:8px 14px;font-size:12.5px;border-radius:10px}
+.btn.block{width:100%}
+.spin{width:16px;height:16px;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;display:inline-block}
+@keyframes sp{to{transform:rotate(360deg)}}
+/* toggle switch */
+.switch{position:relative;width:52px;height:28px;flex:none}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;inset:0;border-radius:999px;background:#475569;transition:.3s;cursor:pointer}
+.slider::before{content:'';position:absolute;width:22px;height:22px;border-radius:50%;background:#fff;top:3px;right:3px;transition:.3s;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+.switch input:checked + .slider{background:var(--grad)}
+.switch input:checked + .slider::before{transform:translateX(-24px)}
+.toggle-line{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--stroke);border-radius:14px;margin-top:10px;background:var(--glass)}
+.toggle-line b{font-size:14px}
+.toggle-line small{display:block;color:var(--muted);font-weight:400;font-size:12px}
 
-    .card {
-      background: white;
-      border-radius: 20px;
-      padding: 25px;
-      margin-bottom: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.06);
-    }
+/* ---------- tabs ---------- */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.tab-btn{
+  background:var(--glass);color:var(--muted);border:1px solid var(--stroke);box-shadow:none;
+  padding:11px 18px;border-radius:999px;font-size:13.5px;
+}
+.tab-btn.active{background:var(--grad);color:#fff;border-color:transparent;box-shadow:0 8px 22px rgba(139,92,246,.4)}
+.tab-pane{display:none;animation:rise .4s ease}
+.tab-pane.active{display:block}
 
-    .card h2 {
-      margin-top: 0;
-    }
+/* ---------- dynamic lists ---------- */
+.item{
+  border:1px solid var(--stroke);border-radius:15px;padding:14px;margin-top:10px;
+  background:rgba(0,0,0,.14);animation:rise .35s ease;
+}
+[data-theme="light"] .item{background:rgba(255,255,255,.6)}
+.item-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.item-head b{font-size:13.5px}
+.item-head .x{margin-inline-start:auto}
+.kprow{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.kp-chip{
+  display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;font-size:13px;font-weight:700;
+  background:linear-gradient(135deg,rgba(139,92,246,.25),rgba(34,211,238,.18));
+  border:1px solid rgba(139,92,246,.45);
+}
+.kp-chip button{padding:2px 8px;font-size:11px}
 
-    label {
-      display: block;
-      font-weight: bold;
-      margin: 16px 0 7px;
-    }
+/* ---------- tables / logs ---------- */
+table.tbl{width:100%;border-collapse:collapse;font-size:13px;margin-top:12px}
+.tbl th,.tbl td{padding:10px 8px;border-bottom:1px solid var(--stroke);text-align:right;vertical-align:top}
+.tbl th{color:var(--muted);font-weight:700;font-size:12px}
+.tbl tr:hover td{background:rgba(139,92,246,.07)}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;direction:ltr;unicode-bidi:embed}
+.logbox{
+  background:rgba(0,0,0,.45);border:1px solid var(--stroke);border-radius:14px;
+  max-height:340px;overflow:auto;padding:12px;font-size:12.5px;line-height:2.1;margin-top:12px;
+}
+[data-theme="light"] .logbox{background:#10142a;color:#dbe4ff}
+.logbox .t{color:#7dd3fc}.logbox .e{color:#fda4af}.logbox .w{color:#fcd34d}.logbox .i{color:#a5b4fc}
+.msg-bubble{border:1px solid var(--stroke);border-radius:14px;padding:10px 14px;margin-top:8px;background:rgba(0,0,0,.14);font-size:13px;line-height:2}
+[data-theme="light"] .msg-bubble{background:rgba(255,255,255,.7)}
+.msg-bubble .reply{margin-top:6px;padding-top:6px;border-top:1px dashed var(--stroke);color:var(--muted)}
+.tag{font-size:11px;font-weight:800;padding:3px 10px;border-radius:999px;background:rgba(34,211,238,.15);border:1px solid rgba(34,211,238,.4)}
+.tag.cmd{background:rgba(139,92,246,.15);border-color:rgba(139,92,246,.45)}
+.tag.key{background:rgba(251,191,36,.14);border-color:rgba(251,191,36,.45)}
+.tag.fb{background:rgba(244,114,182,.12);border-color:rgba(244,114,182,.4)}
 
-    input,
-    textarea {
-      width: 100%;
-      border: 1px solid #d8dee9;
-      border-radius: 12px;
-      padding: 13px;
-      font-family: inherit;
-      font-size: 15px;
-      outline: none;
-      transition: .2s;
-    }
+/* ---------- phone mockup ---------- */
+.phone{
+  width:270px;margin:6px auto 0;border-radius:36px;padding:12px;
+  background:#0d1226;border:1px solid rgba(255,255,255,.16);
+  box-shadow:0 24px 60px rgba(0,0,0,.55),inset 0 0 0 2px rgba(139,92,246,.25);
+}
+.phone .notch{width:110px;height:22px;background:#000;border-radius:999px;margin:0 auto 10px}
+.phone .screen{background:linear-gradient(160deg,#131a36,#0b1025);border-radius:26px;padding:14px;min-height:300px;display:flex;flex-direction:column;gap:8px}
+.bubble{max-width:88%;padding:9px 13px;border-radius:14px;font-size:12.5px;line-height:2;white-space:pre-wrap;word-break:break-word}
+.bubble.bot{background:linear-gradient(135deg,#312e81,#1e3a5f);color:#eef2ff;border-bottom-right-radius:4px;align-self:flex-start}
+.bubble.user{background:var(--grad);color:#fff;border-bottom-left-radius:4px;align-self:flex-end}
+.pk-row{display:flex;gap:6px;flex-wrap:wrap}
+.pk-btn{flex:1;text-align:center;font-size:11px;font-weight:700;padding:7px 4px;border-radius:9px;background:rgba(139,92,246,.3);border:1px solid rgba(139,92,246,.6);color:#e9e4ff;min-width:60px}
 
-    input:focus,
-    textarea:focus {
-      border-color: #315efb;
-      box-shadow: 0 0 0 3px rgba(49,94,251,.1);
-    }
+/* ---------- bot profile ---------- */
+.profile{display:flex;gap:14px;align-items:center;margin-top:14px;padding:14px;border-radius:16px;background:linear-gradient(135deg,rgba(139,92,246,.18),rgba(34,211,238,.1));border:1px solid rgba(139,92,246,.35)}
+.avatar{width:58px;height:58px;border-radius:18px;display:grid;place-items:center;font-size:28px;background:var(--grad);flex:none;box-shadow:0 8px 20px rgba(139,92,246,.45)}
+.profile b{font-size:16px}
+.profile small{color:var(--muted)}
 
-    textarea {
-      min-height: 130px;
-      resize: vertical;
-    }
+/* ---------- toasts ---------- */
+#toasts{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:99;display:flex;flex-direction:column;gap:10px;width:min(480px,92%)}
+.toast{
+  padding:14px 18px;border-radius:15px;font-size:14px;font-weight:700;text-align:center;
+  background:rgba(13,18,38,.92);border:1px solid var(--stroke);color:#fff;
+  backdrop-filter:blur(14px);box-shadow:0 14px 40px rgba(0,0,0,.5);
+  animation:tin .35s cubic-bezier(.2,.9,.3,1.2);
+}
+.toast.ok{border-color:rgba(52,211,153,.6);box-shadow:0 14px 40px rgba(16,185,129,.3)}
+.toast.err{border-color:rgba(251,113,133,.6);box-shadow:0 14px 40px rgba(244,63,94,.3)}
+@keyframes tin{from{opacity:0;transform:translateY(16px) scale(.95)}to{opacity:1;transform:none}}
+.toast.out{opacity:0;transform:translateY(10px);transition:.3s}
 
-    .button-row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 18px;
-    }
-
-    button {
-      border: 0;
-      border-radius: 12px;
-      padding: 13px 22px;
-      font-family: inherit;
-      font-size: 15px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: .2s;
-    }
-
-    button:hover {
-      transform: translateY(-1px);
-    }
-
-    .primary {
-      background: #315efb;
-      color: white;
-    }
-
-    .success {
-      background: #16a34a;
-      color: white;
-    }
-
-    .danger {
-      background: #dc2626;
-      color: white;
-    }
-
-    .secondary {
-      background: #eef2ff;
-      color: #315efb;
-    }
-
-    .status {
-      margin-top: 18px;
-      padding: 14px;
-      border-radius: 12px;
-      background: #f1f5f9;
-      display: none;
-      line-height: 1.8;
-    }
-
-    .status.show {
-      display: block;
-    }
-
-    .status.ok {
-      background: #ecfdf3;
-      color: #166534;
-    }
-
-    .status.error {
-      background: #fff1f2;
-      color: #be123c;
-    }
-
-    .bot-info {
-      background: #f8fafc;
-      padding: 15px;
-      border-radius: 14px;
-      margin-top: 15px;
-      display: none;
-    }
-
-    .bot-info.show {
-      display: block;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-    }
-
-    .security {
-      font-size: 13px;
-      color: #667085;
-      margin-top: 12px;
-      line-height: 1.8;
-    }
-
-    .footer {
-      text-align: center;
-      color: #667085;
-      font-size: 13px;
-      padding: 10px;
-    }
-
-    @media (max-width: 700px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
-
-      .header h1 {
-        font-size: 25px;
-      }
-    }
-  </style>
+/* ---------- misc ---------- */
+.footer{text-align:center;color:var(--muted);font-size:12.5px;padding:16px;line-height:2}
+.divider{height:1px;background:var(--stroke);margin:18px 0}
+.empty{text-align:center;color:var(--muted);padding:26px;font-size:13.5px}
+.emoji-bar{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.emoji-bar button{padding:6px 10px;font-size:16px;background:var(--glass2);box-shadow:none;border:1px solid var(--stroke)}
+.filebox{border:2px dashed var(--stroke);border-radius:14px;padding:20px;text-align:center;margin-top:10px;cursor:pointer;transition:.2s}
+.filebox:hover{border-color:var(--accent1);background:rgba(139,92,246,.07)}
+.secure{font-size:12px;color:var(--muted);margin-top:12px;line-height:2;background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.25);padding:10px 14px;border-radius:12px}
+.danger-zone{border:1px solid rgba(244,63,94,.4);background:rgba(244,63,94,.06);border-radius:16px;padding:18px;margin-top:14px}
+.icon-btn{width:42px;height:42px;padding:0;border-radius:13px;font-size:18px;flex:none}
+.hidden{display:none!important}
+@media(max-width:640px){.topbar{padding:12px}.hero{padding:30px 16px}.card{padding:18px}}
+</style>
 </head>
-
 <body>
 
-<div class="container">
+<div class="bg-stage"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="grain"></div></div>
+<div id="toasts"></div>
 
-  <div class="header">
-    <h1>🤖 ربات‌ساز روبیکا</h1>
-    <p>ساخت و مدیریت ساده ربات روبیکا</p>
+<div class="wrap">
+
+  <!-- ══════════ TOP BAR ══════════ -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">🤖</div>
+      <div>
+        <h1>ربات‌ساز روبیکا <span class="spark">✦ استودیو</span></h1>
+        <small id="verLine">نسخه ۲ · استودیوی مدیریت ربات</small>
+      </div>
+    </div>
+    <div class="top-actions">
+      <span class="pill"><span class="dot" id="netDot"></span><span id="netTxt">قطع</span></span>
+      <button class="btn ghost icon-btn" id="themeBtn" title="تم روشن/تیره">🌙</button>
+    </div>
   </div>
 
+  <!-- ══════════ HERO ══════════ -->
+  <div class="hero">
+    <h2>ربات روبیکای خودت را مثل یک <em>ستاره مد</em> بساز ✦</h2>
+    <p>اتصال · دستورات · کلیدواژه‌ها · دکمه‌ها · کاربران · همگانی · مانیتور زنده</p>
+    <div class="hero-badges">
+      <span class="badge">⚡ پاسخ خودکار</span>
+      <span class="badge cyan">🔘 کیبورد و دکمه شیشه‌ای</span>
+      <span class="badge pink">📣 پیام همگانی</span>
+      <span class="badge gold">📊 آمار زنده</span>
+    </div>
+  </div>
 
-  <!-- اتصال -->
+  <!-- ══════════ STATS ══════════ -->
+  <div class="grid4" id="statsRow">
+    <div class="stat v"><div class="ico">📥</div><div class="num" id="stRx">۰</div><div class="lbl">پیام دریافتی</div></div>
+    <div class="stat g"><div class="ico">📤</div><div class="num" id="stTx">۰</div><div class="lbl">پیام ارسالی</div></div>
+    <div class="stat p"><div class="ico">👥</div><div class="num" id="stUsers">۰</div><div class="lbl">کاربران</div></div>
+    <div class="stat y"><div class="ico">⚡</div><div class="num" id="stCmd">۰</div><div class="lbl">دستورات اجرا شده</div></div>
+  </div>
+  <div style="height:16px"></div>
+
+  <!-- ══════════ CONNECTION ══════════ -->
   <div class="card">
-
     <h2>🔗 اتصال به روبیکا</h2>
-
-    <label for="api">
-      آدرس سرور
-    </label>
-
-    <input
-      id="api"
-      type="text"
-      value="https://rubika-bot-builder.onrender.com"
-    >
-
-    <label for="token">
-      🔑 توکن ربات
-    </label>
-
-    <input
-      id="token"
-      type="password"
-      placeholder="توکن ربات روبیکا را وارد کنید"
-    >
-
-    <div class="button-row">
-
-      <button
-        class="primary"
-        onclick="connectBot()">
-        🔗 اتصال ربات
-      </button>
-
-      <button
-        class="danger"
-        onclick="disconnectBot()">
-        ⛔ قطع اتصال
-      </button>
-
-    </div>
-
-    <div id="status" class="status"></div>
-
-    <div id="botInfo" class="bot-info">
-      <b>🤖 اطلاعات ربات</b>
-      <div id="botDetails"></div>
-    </div>
-
-    <div class="security">
-      🔒 توکن ربات را در GitHub قرار ندهید.
-      توکن فقط برای اتصال به بک‌اند ارسال می‌شود.
-    </div>
-
-  </div>
-
-
-  <!-- تنظیمات -->
-  <div class="card">
-
-    <h2>⚙️ تنظیمات ربات</h2>
-
-    <div class="grid">
-
+    <p class="sub">توکن ربات را از BotFather روبیکا (<span class="mono">@BotFather</span>) بگیر و اینجا وارد کن.</p>
+    <div class="grid2">
       <div>
-
-        <label for="welcome">
-          👋 پیام خوش‌آمدگویی
-        </label>
-
-        <textarea id="welcome">سلام! 👋
-به ربات ما خوش آمدی.
-
-برای شروع پیام خودت را ارسال کن.</textarea>
-
+        <label class="lbl" for="api">🌐 آدرس سرور بک‌اند</label>
+        <input id="api" type="text" dir="ltr" placeholder="https://your-backend.onrender.com">
+        <label class="lbl" for="token">🔑 توکن ربات</label>
+        <div class="row" style="align-items:stretch">
+          <input id="token" type="password" dir="ltr" placeholder="AAAA****..." style="flex:3">
+          <button class="btn ghost icon-btn" onclick="toggleTokenVis()" title="نمایش توکن">👁️</button>
+        </div>
+        <div class="btn-row">
+          <button id="btnConnect" onclick="connectBot()">🔗 اتصال ربات</button>
+          <button id="btnDisconnect" class="btn danger" onclick="disconnectBot()">⛔ قطع اتصال</button>
+          <button class="btn ghost" onclick="testServer()">🧪 تست سرور</button>
+        </div>
+        <div id="profileSlot"></div>
+        <div class="secure">🔒 توکن فقط در مرورگر <b>شما</b> ذخیره می‌شود (localStorage) و فقط برای بک‌اند <b>خودت</b> ارسال می‌شود. آن را در GitHub یا جاهای عمومی قرار نده.</div>
       </div>
-
-
       <div>
-
-        <label for="fallback">
-          💬 پاسخ پیش‌فرض
-        </label>
-
-        <textarea id="fallback">پیامت دریافت شد. 🤖</textarea>
-
+        <label class="lbl">📱 پیش‌نمایش زنده</label>
+        <div class="phone">
+          <div class="notch"></div>
+          <div class="screen">
+            <div class="bubble user">/start</div>
+            <div class="bubble bot" id="pvWelcome">سلام! 👋</div>
+            <div class="pk-row" id="pvKeys"></div>
+            <div class="bubble user" id="pvUserQ">سلام ربات!</div>
+            <div class="bubble bot" id="pvFallback">پیامت دریافت شد 🤖</div>
+          </div>
+        </div>
       </div>
-
     </div>
-
-
-    <div class="button-row">
-
-      <button
-        class="success"
-        onclick="saveConfig()">
-        💾 ذخیره تنظیمات
-      </button>
-
-      <button
-        class="secondary"
-        onclick="testServer()">
-        🧪 تست سرور
-      </button>
-
-    </div>
-
   </div>
 
-
-  <!-- امکانات -->
+  <!-- ══════════ STUDIO TABS ══════════ -->
   <div class="card">
+    <h2>🎛️ استودیوی ربات</h2>
+    <p class="sub">همه‌ی امکانات ربات — اول ربات را متصل کن، بعد هر بخش را تنظیم و ذخیره کن.</p>
+    <div class="tabs" id="tabs">
+      <button class="tab-btn active" data-tab="replies">💬 پاسخ‌ها</button>
+      <button class="tab-btn" data-tab="commands">⌨️ دستورات</button>
+      <button class="tab-btn" data-tab="keywords">🔎 کلیدواژه‌ها</button>
+      <button class="tab-btn" data-tab="buttons">🔘 دکمه‌ها</button>
+      <button class="tab-btn" data-tab="users">👥 کاربران</button>
+      <button class="tab-btn" data-tab="send">📣 ارسال و همگانی</button>
+      <button class="tab-btn" data-tab="live">📡 مانیتور زنده</button>
+      <button class="tab-btn" data-tab="backup">💾 بکاپ</button>
+    </div>
 
-    <h2>🚀 امکانات نسخه اول</h2>
+    <!-- ── REPLIES ── -->
+    <div class="tab-pane active" id="pane-replies">
+      <div class="grid2">
+        <div>
+          <label class="lbl" for="welcome">👋 پیام خوش‌آمد (/start)</label>
+          <textarea id="welcome" oninput="preview()"></textarea>
+          <div class="emoji-bar" data-for="welcome"></div>
+          <label class="lbl" for="fallback">💬 پاسخ پیش‌فرض پیام‌ها</label>
+          <textarea id="fallback" style="min-height:80px" oninput="preview()"></textarea>
+          <div class="emoji-bar" data-for="fallback"></div>
+        </div>
+        <div>
+          <label class="lbl" for="unknown">🤔 پاسخ دستور ناشناخته</label>
+          <textarea id="unknown" style="min-height:70px"></textarea>
+          <label class="lbl" for="helptext">📖 متن /help (خالی = خودکار)</label>
+          <textarea id="helptext" style="min-height:70px" placeholder="خالی بگذار تا خودکار از روی دستورات ساخته شود…"></textarea>
+          <label class="lbl" for="delay">⏱️ تأخیر پاسخ (ثانیه، حس انسانی)</label>
+          <input id="delay" type="number" min="0" max="10" step="0.1" value="0.3" dir="ltr">
+          <div class="toggle-line"><label class="switch"><input type="checkbox" id="tglEnabled" checked><span class="slider"></span></label><div><b>ربات فعال باشد</b><small>خاموش = هیچ پاسخی نمی‌دهد (ولی متصل می‌ماند)</small></div></div>
+          <div class="toggle-line"><label class="switch"><input type="checkbox" id="tglAuto" checked><span class="slider"></span></label><div><b>پاسخ خودکار</b><small>خاموش = فقط دستورات جواب می‌گیرند</small></div></div>
+          <div class="toggle-line"><label class="switch"><input type="checkbox" id="tglMenuStart" checked><span class="slider"></span></label><div><b>نمایش منو در /start</b><small>دکمه‌های تب «دکمه‌ها» همراه خوش‌آمد ارسال شود</small></div></div>
+          <div class="toggle-line"><label class="switch"><input type="checkbox" id="tglMenuAll"><span class="slider"></span></label><div><b>چسباندن منو به همه پاسخ‌ها</b><small>کیبورد همیشه زیر پیام‌ها باشد</small></div></div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn green" id="btnSaveReplies" onclick="saveReplies()">💾 ذخیره پاسخ‌ها</button>
+        <button class="btn ghost" onclick="loadBot(true)">🔄 بارگذاری از سرور</button>
+      </div>
+    </div>
 
-    <p>✅ اتصال به API روبیکا</p>
-    <p>✅ بررسی توکن ربات</p>
-    <p>✅ پیام /start</p>
-    <p>✅ پاسخ خودکار</p>
-    <p>✅ تنظیم پیام خوش‌آمدگویی</p>
-    <p>✅ تنظیم پاسخ پیش‌فرض</p>
-    <p>✅ قطع اتصال ربات</p>
+    <!-- ── COMMANDS ── -->
+    <div class="tab-pane" id="pane-commands">
+      <p class="sub">دستورات با <span class="mono">/</span> شروع می‌شوند. مثلا <span class="mono">/help</span> و <span class="mono">/about</span>. پاسخ خالی برای <span class="mono">/help</span> یعنی «راهنمای خودکار».</p>
+      <div id="cmdList"></div>
+      <div class="btn-row">
+        <button class="btn sm" onclick="addCommand()">➕ افزودن دستور</button>
+        <button class="btn green sm" id="btnSaveCmd" onclick="saveCommands()">💾 ذخیره دستورات</button>
+      </div>
+    </div>
 
+    <!-- ── KEYWORDS ── -->
+    <div class="tab-pane" id="pane-keywords">
+      <p class="sub">اگر پیام کاربر شامل کلیدواژه باشد، پاسخش ارسال می‌شود. حالت تطبیق: <b>شامل</b> / <b>دقیق</b> / <b>شروع با</b>.</p>
+      <div id="kwList"></div>
+      <div class="btn-row">
+        <button class="btn sm" onclick="addKeyword()">➕ افزودن کلیدواژه</button>
+        <button class="btn green sm" id="btnSaveKw" onclick="saveKeywords()">💾 ذخیره کلیدواژه‌ها</button>
+      </div>
+    </div>
+
+    <!-- ── BUTTONS ── -->
+    <div class="tab-pane" id="pane-buttons">
+      <div class="grid2">
+        <div>
+          <label class="lbl">⌨️ کیبورد معمولی (زیر صفحه چت)</label>
+          <p class="hint">هر ردیف = یک سطر دکمه. با «+» دکمه اضافه کن.</p>
+          <div id="chatKp"></div>
+          <div class="btn-row"><button class="btn sm" onclick="addKpRow('chat')">➕ افزودن سطر</button></div>
+        </div>
+        <div>
+          <label class="lbl">💎 دکمه شیشه‌ای (داخل پیام)</label>
+          <p class="hint">دکمه‌های اینلاین که داخل خود پیام خوش‌آمد نمایش داده می‌شوند.</p>
+          <div id="inlineKp"></div>
+          <div class="btn-row"><button class="btn sm" onclick="addKpRow('inline')">➕ افزودن سطر</button></div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn green" id="btnSaveKp" onclick="saveKeypads()">💾 ذخیره دکمه‌ها</button>
+      </div>
+    </div>
+
+    <!-- ── USERS ── -->
+    <div class="tab-pane" id="pane-users">
+      <div class="btn-row" style="margin-top:0">
+        <button class="btn ghost sm" onclick="loadChats()">🔄 به‌روزرسانی کاربران</button>
+      </div>
+      <div id="usersSlot"><div class="empty">هنوز کاربری ثبت نشده — بعد از اتصال و دریافت پیام، اینجا نمایش داده می‌شوند.</div></div>
+    </div>
+
+    <!-- ── SEND ── -->
+    <div class="tab-pane" id="pane-send">
+      <div class="grid2">
+        <div>
+          <label class="lbl" for="sendChat">✉️ ارسال تکی — chat_id مقصد</label>
+          <input id="sendChat" type="text" dir="ltr" placeholder="b0XXXX...">
+          <label class="lbl" for="sendText">متن پیام</label>
+          <textarea id="sendText" style="min-height:90px"></textarea>
+          <div class="btn-row"><button id="btnSend" onclick="sendManual()">✉️ ارسال پیام</button></div>
+        </div>
+        <div>
+          <label class="lbl" for="bcText">📣 پیام همگانی به همه کاربران</label>
+          <textarea id="bcText" style="min-height:120px" placeholder="این پیام برای همه کاربرانی که با ربات حرف زده‌اند ارسال می‌شود…"></textarea>
+          <div class="btn-row"><button class="btn gold" id="btnBc" onclick="broadcast()">📣 ارسال همگانی</button></div>
+          <div class="hint" id="bcHint">کاربران بلاک‌شده پیام همگانی نمی‌گیرند.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── LIVE ── -->
+    <div class="tab-pane" id="pane-live">
+      <div class="row">
+        <button class="btn ghost sm" onclick="loadLogs()">🔄 به‌روزرسانی لاگ</button>
+        <button class="btn ghost sm" onclick="loadRecent()">🔄 پیام‌های اخیر</button>
+        <button class="btn danger sm" onclick="clearLogs()">🧹 پاک کردن لاگ</button>
+        <span class="pill" style="flex:none"><span class="dot on" id="liveDot"></span><span id="liveTxt">زنده</span></span>
+      </div>
+      <div class="grid2" style="margin-top:12px">
+        <div>
+          <label class="lbl">🧾 لاگ ربات</label>
+          <div class="logbox" id="logBox"><div class="empty">لاگی نیست.</div></div>
+        </div>
+        <div>
+          <label class="lbl">💬 پیام‌های اخیر و پاسخ‌ها</label>
+          <div id="recentSlot"><div class="empty">پیامی ثبت نشده.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── BACKUP ── -->
+    <div class="tab-pane" id="pane-backup">
+      <div class="grid2">
+        <div>
+          <label class="lbl">📥 خروجی (بکاپ JSON)</label>
+          <p class="hint">همه تنظیمات ربات (پاسخ‌ها، دستورات، کلیدواژه‌ها، دکمه‌ها…) در یک فایل ذخیره می‌شود.</p>
+          <button class="btn block" onclick="exportCfg()">📥 دانلود بکاپ</button>
+        </div>
+        <div>
+          <label class="lbl">📤 ورودی (بازیابی)</label>
+          <div class="filebox" onclick="document.getElementById('impFile').click()">
+            📁 کلیک کن و فایل بکاپ را انتخاب کن
+            <input type="file" id="impFile" accept=".json" class="hidden" onchange="importCfg(event)">
+          </div>
+        </div>
+      </div>
+      <div class="danger-zone">
+        <b>⚠️ ناحیه خطر</b>
+        <p class="hint">قطع اتصال، پولینگ را متوقف و ربات را از سرور حذف می‌کند (بکاپ بگیر!).</p>
+        <button class="btn danger sm" onclick="disconnectBot()">⛔ قطع اتصال و حذف ربات</button>
+      </div>
+    </div>
   </div>
 
-
-  <div class="footer">
-    ربات‌ساز روبیکا — نسخه 1.0
+  <!-- ══════════ FEATURES ══════════ -->
+  <div class="card">
+    <h2>🚀 امکانات استودیو</h2>
+    <p class="sub">هر چه برای یک ربات حرفه‌ای لازم است — در یک صفحه.</p>
+    <div class="grid3" style="font-size:13.5px;line-height:2.4">
+      <div>✅ اتصال چندرباته با توکن<br>✅ پاسخ /start و خوش‌آمد<br>✅ دستورات سفارشی نامحدود<br>✅ کلیدواژه هوشمند (۳ حالت)</div>
+      <div>✅ کیبورد + دکمه شیشه‌ای<br>✅ مدیریت و بلاک کاربران<br>✅ ارسال تکی و همگانی<br>✅ آمار و مانیتور زنده ⚡</div>
+      <div>✅ بکاپ و بازیابی JSON<br>✅ ذخیره‌سازی ماندگار سرور<br>✅ پیش‌نمایش موبایل 📱<br>✅ تم تیره/روشن 🌙☀️</div>
+    </div>
   </div>
 
+  <div class="footer">ربات‌ساز روبیکا ✦ استودیو — نسخه ۲ · ساخته شده با 💜<br><span id="srvInfo"></span></div>
 </div>
 
-
 <script>
+/* ================================================================
+   STUDIO APP
+   ================================================================ */
+const $ = (id) => document.getElementById(id);
+const FA = n => Number(n||0).toLocaleString('fa-IR');
+const state = { bot:null, summary:null, connected:false, es:null, chats:[] };
 
-  // ============================
-  // ابزارهای کمکی
-  // ============================
+/* ---------- storage ---------- */
+function defaultApi(){
+  try{
+    if(location.origin && location.origin.startsWith('http') && location.protocol !== 'file:'){
+      // Served from backend (Render/VPS/local) → same origin.
+      // GitHub Pages has /botsaz path → NOT backend; fall back to stored/localhost.
+      const onGh = /github\.io$/i.test(location.hostname);
+      if(!onGh) return location.origin;
+    }
+  }catch(e){}
+  return localStorage.getItem('rb_api') || 'http://localhost:8000';
+}
+function initStore(){
+  $('api').value = localStorage.getItem('rb_api') || defaultApi();
+  $('token').value = localStorage.getItem('rb_token') || '';
+  $('api').addEventListener('change', ()=> localStorage.setItem('rb_api', getApi()));
+  $('token').addEventListener('change', ()=> localStorage.setItem('rb_token', getToken()));
+}
+function getApi(){ return ($('api').value||'').trim().replace(/\/+$/,''); }
+function getToken(){ return ($('token').value||'').trim(); }
 
-  const $ = (id) => {
-    return document.getElementById(id);
+/* ---------- theme ---------- */
+function initTheme(){
+  const t = localStorage.getItem('rb_theme') || 'dark';
+  document.documentElement.dataset.theme = t;
+  $('themeBtn').textContent = t === 'dark' ? '🌙' : '☀️';
+  $('themeBtn').onclick = ()=>{
+    const nt = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = nt;
+    localStorage.setItem('rb_theme', nt);
+    $('themeBtn').textContent = nt === 'dark' ? '🌙' : '☀️';
   };
+}
 
+/* ---------- tabs ---------- */
+function initTabs(){
+  document.querySelectorAll('#tabs .tab-btn').forEach(b=>{
+    b.onclick = ()=>{
+      document.querySelectorAll('#tabs .tab-btn').forEach(x=>x.classList.remove('active'));
+      document.querySelectorAll('.tab-pane').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      $('pane-'+b.dataset.tab).classList.add('active');
+    };
+  });
+}
 
-  function showStatus(message, type = "") {
+/* ---------- toast ---------- */
+function toast(msg, type=''){
+  const d = document.createElement('div');
+  d.className = 'toast '+type;
+  d.textContent = msg;
+  $('toasts').appendChild(d);
+  setTimeout(()=>{ d.classList.add('out'); setTimeout(()=>d.remove(), 350); }, 3400);
+}
 
-    const status = $("status");
-
-    status.textContent = message;
-
-    status.className = "status show " + type;
-
+/* ---------- fetch helper ---------- */
+async function api(path, opts={}){
+  const url = getApi() + path;
+  let res;
+  try{
+    res = await fetch(url, {
+      headers:{'Content-Type':'application/json'},
+      ...opts,
+    });
+  }catch(e){
+    throw new Error('اتصال به سرور برقرار نشد. آدرس بک‌اند را بررسی کن.');
   }
-
-
-  function getApiUrl() {
-
-    return $("api")
-      .value
-      .trim()
-      .replace(/\/+$/, "");
-
+  let data = null;
+  try{ data = await res.json(); }catch(e){ /* non-json */ }
+  if(!res.ok){
+    let detail = (data && (data.detail ?? data.message)) || ('خطای '+res.status);
+    if(Array.isArray(detail)) detail = detail.map(x=>x.msg||JSON.stringify(x)).join('؛ ');
+    if(typeof detail !== 'string') detail = JSON.stringify(detail);
+    throw new Error(detail);
   }
+  return data || {};
+}
+function setLoad(btn, on, label){
+  if(!btn) return;
+  if(on){ btn.dataset.old = btn.innerHTML; btn.disabled = true; btn.innerHTML = '<span class="spin"></span> '+ (label||'لطفاً صبر کن…'); }
+  else{ btn.disabled = false; if(btn.dataset.old) btn.innerHTML = btn.dataset.old; }
+}
+function setNet(on){
+  $('netDot').className = 'dot ' + (on ? 'on' : 'off');
+  $('netTxt').textContent = on ? 'متصل' : 'قطع';
+}
+function escapeHtml(s){
+  return String(s ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
+}
 
+/* ---------- emoji shortcuts ---------- */
+const EMOJIS = ['👋','🤖','✨','🔥','❤️','✅','🎉','🙏','💡','⚡','🌹','😄'];
+function initEmoji(){
+  document.querySelectorAll('.emoji-bar').forEach(bar=>{
+    const target = $(bar.dataset.for);
+    EMOJIS.forEach(e=>{
+      const b = document.createElement('button');
+      b.type='button'; b.textContent=e;
+      b.onclick = ()=>{ target.value += e; target.dispatchEvent(new Event('input')); target.focus(); };
+      bar.appendChild(b);
+    });
+  });
+}
 
-  function getToken() {
+/* ---------- preview ---------- */
+function preview(){
+  $('pvWelcome').textContent = $('welcome').value || 'سلام! 👋';
+  $('pvFallback').textContent = $('fallback').value || '…';
+  const rows = readKp('chat').slice(0,3);
+  $('pvKeys').innerHTML = rows.map(r =>
+    `<div class="pk-row" style="width:100%">` + r.slice(0,3).map(b=>`<div class="pk-btn">${escapeHtml(b)}</div>`).join('') + `</div>`
+  ).join('');
+}
 
-    return $("token")
-      .value
-      .trim();
+/* ---------- server test ---------- */
+async function testServer(){
+  try{
+    toast('⏳ در حال بررسی سرور…');
+    const d = await api('/health');
+    $('srvInfo').textContent = `سرور: ${d.service} · نسخه ${d.version} · ربات‌ها: ${FA(d.bots_count)} · آپتایم: ${FA(Math.round(d.uptime_seconds))} ثانیه`;
+    $('verLine').textContent = `نسخه ۲ · بک‌اند ${d.version} · ${FA(d.bots_count)} ربات فعال`;
+    toast('🟢 سرور آنلاین و آماده است.', 'ok');
+  }catch(e){ toast('🔴 '+e.message, 'err'); }
+}
 
-  }
+/* ---------- connect ---------- */
+async function connectBot(){
+  const token = getToken();
+  if(!token){ toast('⚠️ ابتدا توکن ربات را وارد کن.', 'err'); return; }
+  localStorage.setItem('rb_api', getApi());
+  localStorage.setItem('rb_token', token);
+  const btn = $('btnConnect');
+  setLoad(btn, true, 'در حال اتصال…');
+  try{
+    const d = await api('/connect', {method:'POST', body:JSON.stringify({token})});
+    state.connected = true; setNet(true);
+    applyConfig(d.config || {}, d.bot || {});
+    renderProfile(d.bot || {});
+    toast('🟢 ربات با موفقیت متصل شد!', 'ok');
+    startLive(); refreshAll();
+  }catch(e){ toast('🔴 خطا در اتصال: '+e.message, 'err'); }
+  finally{ setLoad(btn, false); }
+}
 
+async function disconnectBot(){
+  const token = getToken();
+  if(!token){ toast('⚠️ توکن وارد نشده است.', 'err'); return; }
+  if(!confirm('اتصال ربات قطع شود؟ (پولینگ متوقف و ربات از سرور حذف می‌شود)')) return;
+  try{
+    await api('/disconnect', {method:'POST', body:JSON.stringify({token})});
+    state.connected = false; setNet(false); stopLive();
+    $('profileSlot').innerHTML = '';
+    toast('🟡 اتصال ربات قطع شد.');
+  }catch(e){ toast('🔴 '+e.message, 'err'); }
+}
 
-  // ============================
-  // تست سرور
-  // ============================
+function toggleTokenVis(){
+  const t = $('token');
+  t.type = t.type === 'password' ? 'text' : 'password';
+}
 
-  async function testServer() {
+function renderProfile(bot){
+  const name = bot.first_name || bot.username || 'ربات من';
+  const user = bot.username ? '@'+bot.username : 'بدون شناسه';
+  $('profileSlot').innerHTML = `
+    <div class="profile">
+      <div class="avatar">🤖</div>
+      <div><b>${escapeHtml(name)}</b><br><small class="mono">${escapeHtml(user)}</small></div>
+      <span class="pill" style="margin-inline-start:auto"><span class="dot on"></span> فعال</span>
+    </div>`;
+}
 
-    try {
+/* ---------- load & apply config ---------- */
+function applyConfig(cfg, bot){
+  state.bot = cfg;
+  $('welcome').value = cfg.welcome ?? '';
+  $('fallback').value = cfg.fallback ?? '';
+  $('unknown').value = cfg.unknown_command ?? '';
+  $('helptext').value = cfg.help_text ?? '';
+  $('delay').value = cfg.typing_delay ?? 0.3;
+  $('tglEnabled').checked = cfg.enabled !== false;
+  $('tglAuto').checked = cfg.auto_reply !== false;
+  $('tglMenuStart').checked = cfg.show_menu_on_start !== false;
+  $('tglMenuAll').checked = !!cfg.attach_menu_to_all;
+  renderCommands(cfg.commands || []);
+  renderKeywords(cfg.keywords || []);
+  renderKp('chat', cfg.chat_keypad || []);
+  renderKp('inline', cfg.inline_buttons || []);
+  preview();
+  if(bot && Object.keys(bot).length) renderProfile(bot);
+}
 
-      showStatus("⏳ در حال بررسی سرور...");
+async function loadBot(notify){
+  const token = getToken();
+  if(!token){ if(notify) toast('⚠️ ابتدا متصل شو.', 'err'); return; }
+  try{
+    const d = await api('/bot?token='+encodeURIComponent(token));
+    state.connected = true; setNet(true);
+    applyConfig(d.config || {}, (d.summary||{}).bot || {});
+    if(notify) toast('🔄 تنظیمات از سرور بارگذاری شد.', 'ok');
+    startLive(); refreshAll();
+  }catch(e){ if(notify) toast('🔴 '+e.message, 'err'); }
+}
 
-      const response = await fetch(
-        getApiUrl() + "/health"
-      );
+async function saveReplies(){
+  const token = getToken();
+  if(!token){ toast('⚠️ ابتدا متصل شو.', 'err'); return; }
+  const btn = $('btnSaveReplies');
+  setLoad(btn, true, 'در حال ذخیره…');
+  try{
+    await api('/config', {method:'POST', body:JSON.stringify({
+      token,
+      welcome:$('welcome').value, fallback:$('fallback').value,
+      unknown_command:$('unknown').value, help_text:$('helptext').value,
+      typing_delay:parseFloat($('delay').value||'0'),
+      enabled:$('tglEnabled').checked, auto_reply:$('tglAuto').checked,
+      show_menu_on_start:$('tglMenuStart').checked, attach_menu_to_all:$('tglMenuAll').checked,
+    })});
+    toast('🟢 پاسخ‌ها ذخیره شد.', 'ok'); preview();
+  }catch(e){ toast('🔴 '+e.message, 'err'); }
+  finally{ setLoad(btn, false); }
+}
 
-      if (!response.ok) {
-        throw new Error("سرور پاسخ مناسبی نداد.");
-      }
+/* toggle switches → immediate save */
+['tglEnabled','tglAuto','tglMenuStart','tglMenuAll'].forEach(id=>{
+  document.addEventListener('DOMContentLoaded', ()=>{
+    $(id).addEventListener('change', async ()=>{
+      if(!getToken() || !state.connected) return;
+      const map = {tglEnabled:'enabled', tglAuto:'auto_reply', tglMenuStart:'show_menu_on_start', tglMenuAll:'attach_menu_to_all'};
+      try{
+        await api('/config', {method:'POST', body:JSON.stringify({token:getToken(), [map[id]]:$(id).checked})});
+        toast('⚙️ ذخیره شد.', 'ok');
+      }catch(e){ toast('🔴 '+e.message, 'err'); }
+    });
+  });
+});
 
-      const data = await response.json();
+/* ---------- commands ---------- */
+function renderCommands(list){
+  const box = $('cmdList'); box.innerHTML = '';
+  if(!list.length) box.innerHTML = '<div class="empty">دستوری نیست — یکی اضافه کن.</div>';
+  list.forEach((c,i)=> box.appendChild(cmdItem(c.trigger||'', c.response||'')));
+}
+function cmdItem(trig, resp){
+  const d = document.createElement('div'); d.className='item';
+  d.innerHTML = `
+    <div class="item-head"><b>⌨️ دستور</b><button class="btn danger sm x" onclick="this.closest('.item').remove()">✕ حذف</button></div>
+    <div class="row">
+      <input type="text" dir="ltr" class="c-trig" placeholder="/about" value="${escapeHtml(trig)}">
+      <input type="text" class="c-resp" placeholder="پاسخ…" value="${escapeHtml(resp)}" style="flex:3">
+    </div>`;
+  return d;
+}
+function addCommand(){ $('cmdList').appendChild(cmdItem('/','')); }
+function readCommands(){
+  return [...document.querySelectorAll('#cmdList .item')].map(el=>({
+    trigger:(el.querySelector('.c-trig').value||'').trim(),
+    response:el.querySelector('.c-resp').value||'',
+  })).filter(x=>x.trigger);
+}
+async function saveCommands(){
+  const token = getToken();
+  if(!token){ toast('⚠️ ابتدا متصل شو.', 'err'); return; }
+  const btn=$('btnSaveCmd'); setLoad(btn,true,'در حال ذخیره…');
+  try{
+    await api('/config',{method:'POST',body:JSON.stringify({token, commands:readCommands()})});
+    toast('🟢 دستورات ذخیره شد.','ok');
+  }catch(e){ toast('🔴 '+e.message,'err'); } finally{ setLoad(btn,false); }
+}
 
-      if (data.ok === true) {
+/* ---------- keywords ---------- */
+const MATCH_FA = {contains:'شامل باشد', exact:'دقیقاً برابر', starts:'شروع شود با'};
+function renderKeywords(list){
+  const box=$('kwList'); box.innerHTML='';
+  if(!list.length) box.innerHTML='<div class="empty">کلیدواژه‌ای نیست — یکی اضافه کن.</div>';
+  list.forEach(k=> box.appendChild(kwItem(k.keyword||'', k.response||'', k.match||'contains')));
+}
+function kwItem(kw, resp, match){
+  const d=document.createElement('div'); d.className='item';
+  d.innerHTML=`
+    <div class="item-head"><b>🔎 کلیدواژه</b><button class="btn danger sm x" onclick="this.closest('.item').remove()">✕ حذف</button></div>
+    <div class="row">
+      <input type="text" class="k-kw" placeholder="سلام" value="${escapeHtml(kw)}">
+      <select class="k-match" style="max-width:170px">
+        ${Object.entries(MATCH_FA).map(([v,l])=>`<option value="${v}" ${v===match?'selected':''}>${l}</option>`).join('')}
+      </select>
+      <input type="text" class="k-resp" placeholder="پاسخ…" value="${escapeHtml(resp)}" style="flex:3">
+    </div>`;
+  return d;
+}
+function addKeyword(){ $('kwList').appendChild(kwItem('','','contains')); }
+function readKeywords(){
+  return [...document.querySelectorAll('#kwList .item')].map(el=>({
+    keyword:(el.querySelector('.k-kw').value||'').trim(),
+    response:el.querySelector('.k-resp').value||'',
+    match:el.querySelector('.k-match').value||'contains',
+  })).filter(x=>x.keyword);
+}
+async function saveKeywords(){
+  const token=getToken();
+  if(!token){ toast('⚠️ ابتدا متصل شو.','err'); return; }
+  const btn=$('btnSaveKw'); setLoad(btn,true,'در حال ذخیره…');
+  try{
+    await api('/config',{method:'POST',body:JSON.stringify({token, keywords:readKeywords()})});
+    toast('🟢 کلیدواژه‌ها ذخیره شد.','ok');
+  }catch(e){ toast('🔴 '+e.message,'err'); } finally{ setLoad(btn,false); }
+}
 
-        showStatus(
-          "🟢 سرور آنلاین و آماده است.",
-          "ok"
-        );
+/* ---------- keypads ---------- */
+const kpState = {chat:[['🚀 شروع','ℹ️ راهنما']], inline:[]};
+function renderKp(which, rows){
+  kpState[which] = (rows && rows.length ? rows : []).map(r=>[...r]);
+  if(!kpState[which].length && which==='chat') kpState[which]=[];
+  drawKp(which);
+}
+function drawKp(which){
+  const box = $(which==='chat'?'chatKp':'inlineKp');
+  box.innerHTML='';
+  if(!kpState[which].length) box.innerHTML='<div class="empty">سطری نیست.</div>';
+  kpState[which].forEach((row,ri)=>{
+    const d=document.createElement('div'); d.className='item';
+    d.innerHTML=`<div class="item-head"><b>سطر ${FA(ri+1)}</b>
+      <button class="btn danger sm x" onclick="delKpRow('${which}',${ri})">✕</button></div>
+      <div class="kprow">${row.map((b,bi)=>`<span class="kp-chip">${escapeHtml(b)}<button class="btn danger" onclick="delKpBtn('${which}',${ri},${bi})">✕</button></span>`).join('')}</div>
+      <div class="row" style="margin-top:8px"><input type="text" id="kp-${which}-${ri}" placeholder="متن دکمه جدید…" onkeydown="if(event.key==='Enter'){event.preventDefault();addKpBtn('${which}',${ri});}"><button class="btn sm" style="flex:none" onclick="addKpBtn('${which}',${ri})">➕ دکمه</button></div>`;
+    box.appendChild(d);
+  });
+  preview();
+}
+function addKpRow(which){ kpState[which].push([]); drawKp(which); }
+function delKpRow(which,ri){ kpState[which].splice(ri,1); drawKp(which); }
+function addKpBtn(which,ri){
+  const inp = $('kp-'+which+'-'+ri);
+  const v = (inp.value||'').trim();
+  if(!v) return;
+  kpState[which][ri].push(v); drawKp(which);
+}
+function delKpBtn(which,ri,bi){ kpState[which][ri].splice(bi,1); drawKp(which); }
+function readKp(which){ return kpState[which].map(r=>r.filter(Boolean)).filter(r=>r.length); }
+async function saveKeypads(){
+  const token=getToken();
+  if(!token){ toast('⚠️ ابتدا متصل شو.','err'); return; }
+  const btn=$('btnSaveKp'); setLoad(btn,true,'در حال ذخیره…');
+  try{
+    await api('/config',{method:'POST',body:JSON.stringify({token, chat_keypad:readKp('chat'), inline_buttons:readKp('inline')})});
+    toast('🟢 دکمه‌ها ذخیره شد.','ok'); preview();
+  }catch(e){ toast('🔴 '+e.message,'err'); } finally{ setLoad(btn,false); }
+}
 
-      } else {
+/* ---------- stats ---------- */
+function paintStats(s){
+  if(!s) return;
+  $('stRx').textContent = FA(s.messages_received);
+  $('stTx').textContent = FA(s.messages_sent);
+  $('stUsers').textContent = FA(s.unique_users ?? s.total_chats ?? 0);
+  $('stCmd').textContent = FA(s.commands_used);
+}
+async function loadStats(){
+  const token=getToken();
+  if(!token) return;
+  try{
+    const d = await api('/stats?token='+encodeURIComponent(token));
+    paintStats(d.stats);
+  }catch(e){ /* silent */ }
+}
 
-        showStatus(
-          "🟡 سرور پاسخ داد ولی وضعیت نامشخص است.",
-          ""
-        );
-
-      }
-
-    } catch (error) {
-
-      showStatus(
-        "🔴 اتصال به سرور برقرار نشد: " +
-        error.message,
-        "error"
-      );
-
+/* ---------- users ---------- */
+async function loadChats(){
+  const token=getToken();
+  if(!token){ toast('⚠️ ابتدا متصل شو.','err'); return; }
+  try{
+    const d = await api('/chats?token='+encodeURIComponent(token)+'&limit=200');
+    state.chats = d.chats||[];
+    paintStats({...(state.lastStats||{}), unique_users:d.count});
+    if(!state.chats.length){
+      $('usersSlot').innerHTML='<div class="empty">هنوز کاربری ثبت نشده.</div>'; return;
     }
+    $('usersSlot').innerHTML = `
+      <table class="tbl"><tr><th>کاربر</th><th>chat_id</th><th>پیام‌ها</th><th>آخرین پیام</th><th>وضعیت</th><th>عمل</th></tr>
+      ${state.chats.map(c=>`<tr>
+        <td><b>${escapeHtml(c.name||'—')}</b><br><small style="color:var(--muted)">${escapeHtml((c.last_seen||'').slice(0,16).replace('T',' '))}</small></td>
+        <td class="mono">${escapeHtml(c.chat_id)}</td>
+        <td>${FA(c.count)}</td>
+        <td><small>${escapeHtml((c.last_text||'').slice(0,60))}</small></td>
+        <td>${c.blocked?'⛔ بلاک':'✅ آزاد'}</td>
+        <td style="white-space:nowrap">
+          <button class="btn sm" onclick="quickSend('${escapeHtml(c.chat_id)}')">✉️</button>
+          <button class="btn ${c.blocked?'green':'danger'} sm" onclick="blockUser('${escapeHtml(c.chat_id)}',${!c.blocked})">${c.blocked?'آنبلاک':'بلاک'}</button>
+        </td></tr>`).join('')}
+      </table>`;
+  }catch(e){ toast('🔴 '+e.message,'err'); }
+}
+async function blockUser(chat_id, blocked){
+  try{
+    const d = await api('/block',{method:'POST',body:JSON.stringify({token:getToken(), chat_id, blocked})});
+    toast('✅ '+d.message,'ok'); loadChats();
+  }catch(e){ toast('🔴 '+e.message,'err'); }
+}
+function quickSend(chat_id){
+  $('sendChat').value = chat_id;
+  document.querySelector('[data-tab="send"]').click();
+  $('sendText').focus();
+  window.scrollTo({top:document.querySelector('#pane-send').offsetTop-140, behavior:'smooth'});
+}
 
-  }
+/* ---------- send & broadcast ---------- */
+async function sendManual(){
+  const token=getToken(), chat_id=$('sendChat').value.trim(), text=$('sendText').value.trim();
+  if(!token||!chat_id||!text){ toast('⚠️ توکن، chat_id و متن لازم است.','err'); return; }
+  const btn=$('btnSend'); setLoad(btn,true,'در حال ارسال…');
+  try{ await api('/send',{method:'POST',body:JSON.stringify({token,chat_id,text})}); toast('🟢 پیام ارسال شد.','ok'); $('sendText').value=''; }
+  catch(e){ toast('🔴 '+e.message,'err'); } finally{ setLoad(btn,false); }
+}
+async function broadcast(){
+  const token=getToken(), text=$('bcText').value.trim();
+  if(!token||!text){ toast('⚠️ متن همگانی خالی است.','err'); return; }
+  if(!confirm('پیام همگانی به همه کاربران ارسال شود؟')) return;
+  const btn=$('btnBc'); setLoad(btn,true,'در حال ارسال همگانی…');
+  try{
+    const d = await api('/broadcast',{method:'POST',body:JSON.stringify({token,text})});
+    toast('📣 '+d.message,'ok'); $('bcText').value='';
+  }catch(e){ toast('🔴 '+e.message,'err'); } finally{ setLoad(btn,false); }
+}
 
+/* ---------- logs & recent ---------- */
+function logLine(l){
+  const cls = l.level==='error'?'e':l.level==='warning'?'w':'i';
+  const t = (l.at||'').slice(11,19);
+  return `<div><span class="t">[${t}]</span> <span class="${cls}">${escapeHtml(l.message||'')}</span></div>`;
+}
+async function loadLogs(){
+  const token=getToken(); if(!token) return;
+  try{
+    const d = await api('/logs?token='+encodeURIComponent(token)+'&limit=120');
+    $('logBox').innerHTML = d.logs.length ? d.logs.map(logLine).join('') : '<div class="empty">لاگی نیست.</div>';
+  }catch(e){ /* silent */ }
+}
+async function clearLogs(){
+  const token=getToken(); if(!token) return;
+  try{ await fetch(getApi()+'/logs?token='+encodeURIComponent(token),{method:'DELETE'}); $('logBox').innerHTML='<div class="empty">لاگی نیست.</div>'; toast('🧹 لاگ پاک شد.','ok'); }
+  catch(e){ toast('🔴 '+e.message,'err'); }
+}
+const KIND_FA = {start:'🚀 شروع', help:'📖 راهنما', command:'⌨️ دستور', keyword:'🔎 کلیدواژه', fallback:'💬 خودکار', button:'🔘 دکمه'};
+function kindTag(k){
+  const cls = k==='command'||k==='start'||k==='help' ? 'cmd' : k==='keyword' ? 'key' : 'fb';
+  return `<span class="tag ${cls}">${KIND_FA[k]||k||'—'}</span>`;
+}
+async function loadRecent(){
+  const token=getToken(); if(!token) return;
+  try{
+    const d = await api('/recent?token='+encodeURIComponent(token)+'&limit=20');
+    $('recentSlot').innerHTML = d.recent.length ? d.recent.map(m=>`
+      <div class="msg-bubble">${kindTag(m.kind)} <span class="mono">${escapeHtml(m.chat_id||'')}</span>
+        <div style="margin-top:6px">👤 ${escapeHtml(m.text||'')}</div>
+        ${m.reply?`<div class="reply">🤖 ${escapeHtml(m.reply)}</div>`:'<div class="reply">⏸️ بدون پاسخ</div>'}
+      </div>`).join('') : '<div class="empty">پیامی ثبت نشده.</div>';
+  }catch(e){ /* silent */ }
+}
 
-  // ============================
-  // اتصال ربات
-  // ============================
-
-  async function connectBot() {
-
-    const token = getToken();
-
-    if (!token) {
-
-      showStatus(
-        "⚠️ ابتدا توکن ربات را وارد کنید.",
-        "error"
-      );
-
-      return;
-    }
-
-
-    try {
-
-      showStatus(
-        "⏳ در حال اتصال به روبیکا..."
-      );
-
-
-      const response = await fetch(
-        getApiUrl() + "/connect",
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type": "application/json"
-          },
-
-          body: JSON.stringify({
-            token: token
-          })
+/* ---------- live SSE ---------- */
+function startLive(){
+  stopLive();
+  const token=getToken(); if(!token) return;
+  try{
+    const es = new EventSource(getApi()+'/events?token='+encodeURIComponent(token));
+    state.es = es;
+    es.onmessage = (ev)=>{
+      try{
+        const d = JSON.parse(ev.data);
+        if(d.stats){ state.lastStats=d.stats; paintStats(d.stats); }
+        if(d.logs && d.logs.length){
+          const box=$('logBox');
+          if(box.querySelector('.empty')) box.innerHTML='';
+          d.logs.forEach(l=> box.insertAdjacentHTML('afterbegin', logLine(l)));
+          while(box.children.length>150) box.lastChild.remove();
         }
-      );
-
-
-      const data = await response.json();
-
-
-      if (!response.ok) {
-
-        throw new Error(
-          data.detail ||
-          "اتصال ناموفق بود."
-        );
-
-      }
-
-
-      showStatus(
-        "🟢 ربات با موفقیت متصل شد!",
-        "ok"
-      );
-
-
-      const bot =
-        data.bot || {};
-
-
-      $("botInfo")
-        .classList
-        .add("show");
-
-
-      $("botDetails").innerHTML = `
-
-        <p>
-          <b>نام:</b>
-          ${escapeHtml(
-            bot.first_name ||
-            bot.username ||
-            "نامشخص"
-          )}
-        </p>
-
-        ${
-          bot.username
-          ?
-          `<p><b>شناسه:</b> @${escapeHtml(bot.username)}</p>`
-          :
-          ""
-        }
-
-      `;
-
-    }
-
-    catch (error) {
-
-      showStatus(
-        "🔴 خطا در اتصال: " +
-        error.message,
-        "error"
-      );
-
-    }
-
-  }
-
-
-  // ============================
-  // ذخیره تنظیمات
-  // ============================
-
-  async function saveConfig() {
-
-    const token = getToken();
-
-
-    if (!token) {
-
-      showStatus(
-        "⚠️ ابتدا ربات را متصل کنید.",
-        "error"
-      );
-
-      return;
-    }
-
-
-    try {
-
-      showStatus(
-        "⏳ در حال ذخیره تنظیمات..."
-      );
-
-
-      const response = await fetch(
-        getApiUrl() + "/config",
-        {
-
-          method: "POST",
-
-          headers: {
-            "Content-Type": "application/json"
-          },
-
-          body: JSON.stringify({
-
-            token: token,
-
-            welcome:
-              $("welcome").value,
-
-            fallback:
-              $("fallback").value
-
-          })
-
-        }
-      );
-
-
-      const data =
-        await response.json();
-
-
-      if (!response.ok) {
-
-        throw new Error(
-          data.detail ||
-          "ذخیره تنظیمات ناموفق بود."
-        );
-
-      }
-
-
-      showStatus(
-        "🟢 تنظیمات با موفقیت ذخیره شد.",
-        "ok"
-      );
-
-    }
-
-    catch (error) {
-
-      showStatus(
-        "🔴 خطا: " +
-        error.message,
-        "error"
-      );
-
-    }
-
-  }
-
-
-  // ============================
-  // قطع اتصال
-  // ============================
-
-  async function disconnectBot() {
-
-    const token = getToken();
-
-
-    if (!token) {
-
-      showStatus(
-        "⚠️ توکن ربات وارد نشده است.",
-        "error"
-      );
-
-      return;
-    }
-
-
-    try {
-
-      const response = await fetch(
-        getApiUrl() + "/disconnect",
-        {
-
-          method: "POST",
-
-          headers: {
-            "Content-Type": "application/json"
-          },
-
-          body: JSON.stringify({
-            token: token
-          })
-
-        }
-      );
-
-
-      if (!response.ok) {
-
-        const data =
-          await response.json();
-
-        throw new Error(
-          data.detail ||
-          "قطع اتصال ناموفق بود."
-        );
-
-      }
-
-
-      showStatus(
-        "🟡 اتصال ربات قطع شد."
-      );
-
-
-      $("botInfo")
-        .classList
-        .remove("show");
-
-    }
-
-    catch (error) {
-
-      showStatus(
-        "🔴 خطا: " +
-        error.message,
-        "error"
-      );
-
-    }
-
-  }
-
-
-  // ============================
-  // جلوگیری از HTML Injection
-  // ============================
-
-  function escapeHtml(text) {
-
-    return String(text)
-
-      .replaceAll("&", "&amp;")
-
-      .replaceAll("<", "&lt;")
-
-      .replaceAll(">", "&gt;")
-
-      .replaceAll('"', "&quot;")
-
-      .replaceAll("'", "&#039;");
-
-  }
-
-
-  // ============================
-  // پایان
-  // ============================
-
+        $('liveTxt').textContent='زنده';
+        $('liveDot').className='dot on';
+      }catch(e){}
+    };
+    es.onerror = ()=>{ $('liveTxt').textContent='تلاش مجدد…'; $('liveDot').className='dot off'; };
+  }catch(e){ /* EventSource unsupported → polling fallback */ }
+}
+function stopLive(){ if(state.es){ try{state.es.close();}catch(e){} state.es=null; } }
+
+/* ---------- refresh ---------- */
+function refreshAll(){ loadStats(); loadChats(); loadLogs(); loadRecent(); }
+
+/* ---------- backup ---------- */
+async function exportCfg(){
+  const token=getToken(); if(!token){ toast('⚠️ ابتدا متصل شو.','err'); return; }
+  try{
+    const d = await api('/export',{method:'POST',body:JSON.stringify({token})});
+    const blob = new Blob([JSON.stringify(d.config,null,2)],{type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'rubika-bot-backup.json';
+    a.click();
+    toast('📥 بکاپ دانلود شد.','ok');
+  }catch(e){ toast('🔴 '+e.message,'err'); }
+}
+async function importCfg(ev){
+  const f = ev.target.files[0]; if(!f) return;
+  const token=getToken(); if(!token){ toast('⚠️ ابتدا متصل شو.','err'); return; }
+  try{
+    const text = await f.text();
+    const config = JSON.parse(text);
+    const d = await api('/import',{method:'POST',body:JSON.stringify({token, config})});
+    toast('📤 '+d.message,'ok');
+    loadBot(false);
+  }catch(e){ toast('🔴 فایل معتبر نیست: '+e.message,'err'); }
+  ev.target.value='';
+}
+
+/* ---------- boot ---------- */
+document.addEventListener('DOMContentLoaded', ()=>{
+  initStore(); initTheme(); initTabs(); initEmoji();
+  renderCommands([{trigger:'/help',response:''},{trigger:'/about',response:'🤖 ساخته شده با ربات‌ساز روبیکا ✨'}]);
+  renderKeywords([{keyword:'سلام',response:'سلام عزیز! 👋',match:'starts'}]);
+  drawKp('chat'); drawKp('inline'); preview();
+  testServer();
+  if(getToken()) loadBot(false);
+  setInterval(()=>{ if(state.connected && !state.es) loadStats(); }, 8000);
+});
 </script>
-
 </body>
 </html>
