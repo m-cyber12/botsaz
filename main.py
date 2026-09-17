@@ -5,6 +5,7 @@ A full-featured FastAPI backend for building & managing Rubika bots.
 
 Features:
 - Multi-bot connect / disconnect with background polling (one task per bot)
+- Auto-detects the Rubika API version (current v3 + legacy v1 fallback)
 - Auto-replies: /start welcome, custom commands, keyword triggers, fallback
 - Chat keypad + inline buttons support (Rubika keypad format)
 - Button / callback handling
@@ -27,6 +28,7 @@ import hashlib
 import json
 import logging
 import os
+import re
 import time
 from collections import deque
 from contextlib import asynccontextmanager
@@ -45,7 +47,10 @@ from pydantic import BaseModel, Field, field_validator
 # Configuration (env overridable)
 # ---------------------------------------------------------------------------
 
-API_BASE: str = os.getenv("RUBIKA_API_BASE", "https://botapi.rubika.ir/v1").rstrip("/")
+# Current official API is v3 (see https://rubika.ir/botapi/methods).
+# The legacy v1 endpoint requires a "version" field in every request body;
+# the client below detects & handles both transparently.
+API_BASE: str = os.getenv("RUBIKA_API_BASE", "https://botapi.rubika.ir/v3").rstrip("/")
 CORS_ORIGINS: List[str] = [
     o.strip() for o in os.getenv("CORS_ORIGINS", "*").split(",") if o.strip()
 ]
@@ -58,7 +63,7 @@ MAX_LOGS_PER_BOT: int = int(os.getenv("MAX_LOGS_PER_BOT", "300"))
 MAX_CHATS_PER_BOT: int = int(os.getenv("MAX_CHATS_PER_BOT", "2000"))
 MAX_RECENT_MESSAGES: int = int(os.getenv("MAX_RECENT_MESSAGES", "60"))
 
-VERSION = "2.0.0"
+VERSION = "2.1.0"
 SERVICE_NAME = "rubika-bot-builder"
 START_TIME = time.time()
 
@@ -374,6 +379,49 @@ class ImportRequest(BaseModel):
 # ---------------------------------------------------------------------------
 # Rubika API helpers
 # ---------------------------------------------------------------------------
+#
+# API versioning:
+#   - Current official API: https://botapi.rubika.ir/v3/{token}/{method}
+#     Bodies are plain fields (no "version" field).
+#     Replies look like {"status": "OK", "data": {...}}.
+#   - Legacy API: https://botapi.rubika.ir/v1/{token}/{method}
+#     Every request body MUST include {"version": "1.0"}; without it the
+#     server rejects the call with
+#     {"status": "INVALID_INPUT", "dev_message": "Invalid Version"}.
+#
+# The client below is version-agnostic: it tries the configured base first
+# (default v3). If the server answers "Invalid Version" (legacy endpoint),
+# it transparently retries the known-good variants (v1 + version field,
+# v3 plain) and remembers which variant worked for subsequent calls.
+
+LEGACY_VERSION_FIELD = "1.0"
+
+_working_base: Optional[str] = None
+_send_version_field: bool = False
+
+
+class RubikaAPIError(RuntimeError):
+    """Rubika API returned an error status (usually HTTP 200 + non-OK body)."""
+
+    def __init__(self, message: str, body: Dict[str, Any]) -> None:
+        super().__init__(message)
+        self.body = body
+
+
+def _base_with_version(base: str, target: str) -> str:
+    """Return `base` with its trailing /vN segment replaced by /target."""
+    return re.sub(r"/v\d+$", f"/{target}", base.rstrip("/"))
+
+
+def _is_invalid_version_error(body: Dict[str, Any]) -> bool:
+    """True for the legacy 'Invalid Version' rejection (v1, missing version)."""
+    if str(body.get("status", "")).upper() not in ("INVALID_INPUT", "INVALID_VERSION"):
+        return False
+    blob = " ".join(
+        str(body.get(key) or "") for key in ("message", "dev_message", "error", "detail")
+    ).lower()
+    return "version" in blob
+
 
 async def get_http() -> httpx.AsyncClient:
     global _http_client
@@ -385,15 +433,13 @@ async def get_http() -> httpx.AsyncClient:
     return _http_client
 
 
-async def rubika(
-    method: str,
-    token: str,
-    data: Optional[Dict[str, Any]] = None,
+async def _rubika_post(
+    base: str, method: str, token: str, payload: Dict[str, Any]
 ) -> Dict[str, Any]:
-    url = f"{API_BASE}/{token}/{method}"
+    url = f"{base}/{token}/{method}"
     client = await get_http()
     try:
-        response = await client.post(url, json=data or {})
+        response = await client.post(url, json=payload)
     except httpx.TimeoutException as exc:
         raise RuntimeError(f"اتصال به روبیکا timeout شد ({method}).") from exc
     except httpx.RequestError as exc:
@@ -416,10 +462,83 @@ async def rubika(
     # Rubika sometimes returns {status: "ERROR", ...} with HTTP 200
     status = str(result.get("status", "")).upper()
     if status and status not in ("OK", "SUCCESS"):
-        err = result.get("message") or result.get("error") or result
-        raise RuntimeError(f"خطای API روبیکا ({method}): {str(err)[:300]}")
+        # Prefer human-readable fields; fall back to the whole body.
+        err = (
+            result.get("message")
+            or result.get("dev_message")
+            or result.get("error")
+            or result
+        )
+        raise RubikaAPIError(f"خطای API روبیکا ({method}): {str(err)[:300]}", result)
 
     return result
+
+
+def _api_candidates() -> List[Tuple[str, bool]]:
+    """Ordered (base, include_version_field) variants to try."""
+    if _working_base is not None:
+        candidates: List[Tuple[str, bool]] = [
+            (_working_base, _send_version_field),
+            (_working_base, not _send_version_field),
+        ]
+        if not _working_base.rstrip("/").endswith("/v3"):
+            candidates.append((_base_with_version(_working_base, "v3"), False))
+    else:
+        base = API_BASE
+        candidates = [(base, False)]
+        if base.rstrip("/").endswith("/v1"):
+            candidates.append((base, True))  # legacy v1 wants the version field
+            candidates.append((_base_with_version(base, "v3"), False))  # modern v3
+        else:
+            candidates.append((base, True))  # harmless if the API ignores it
+            candidates.append((_base_with_version(base, "v1"), True))  # legacy fallback
+    # Deduplicate, keep order.
+    seen: set = set()
+    out: List[Tuple[str, bool]] = []
+    for cand in candidates:
+        if cand not in seen:
+            seen.add(cand)
+            out.append(cand)
+    return out
+
+
+async def rubika(
+    method: str,
+    token: str,
+    data: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    """Call a Rubika Bot API method (version-tolerant).
+
+    Tries the configured base first (default v3). If the API answers
+    "Invalid Version" (legacy v1 endpoint expecting a version field),
+    retries the other known-good variants and remembers which one worked.
+    """
+    global _working_base, _send_version_field
+
+    last_error: Optional[Exception] = None
+    for index, (base, with_version) in enumerate(_api_candidates()):
+        payload = dict(data or {})
+        if with_version:
+            payload.setdefault("version", LEGACY_VERSION_FIELD)
+        try:
+            result = await _rubika_post(base, method, token, payload)
+        except RubikaAPIError as exc:
+            if not _is_invalid_version_error(exc.body):
+                raise
+            last_error = exc
+            continue
+        if index > 0:
+            _working_base = base
+            _send_version_field = with_version
+            logger.info(
+                "Rubika API: switched to working variant %s (version_field=%s)",
+                base,
+                with_version,
+            )
+        return result
+
+    assert last_error is not None
+    raise last_error
 
 
 def get_result(data: Dict[str, Any]) -> Dict[str, Any]:
