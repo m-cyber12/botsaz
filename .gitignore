@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.tmp
+bots_data.json
+bots_data.json.tmp
+.env
+.DS_Store
