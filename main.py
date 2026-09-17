@@ -45,7 +45,7 @@ from pydantic import BaseModel, Field, field_validator
 # Configuration (env overridable)
 # ---------------------------------------------------------------------------
 
-API_BASE: str = os.getenv("RUBIKA_API_BASE", "https://botapi.rubika.ir/v1").rstrip("/")
+API_BASE: str = os.getenv("RUBIKA_API_BASE", "https://botapi.rubika.ir/v3").rstrip("/")
 CORS_ORIGINS: List[str] = [
     o.strip() for o in os.getenv("CORS_ORIGINS", "*").split(",") if o.strip()
 ]
@@ -416,7 +416,12 @@ async def rubika(
     # Rubika sometimes returns {status: "ERROR", ...} with HTTP 200
     status = str(result.get("status", "")).upper()
     if status and status not in ("OK", "SUCCESS"):
-        err = result.get("message") or result.get("error") or result
+        err = (
+            result.get("message")
+            or result.get("error")
+            or result.get("dev_message")
+            or result
+        )
         raise RuntimeError(f"خطای API روبیکا ({method}): {str(err)[:300]}")
 
     return result
