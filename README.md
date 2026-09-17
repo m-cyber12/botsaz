@@ -41,7 +41,7 @@ docker run -p 8000:8000 -v botdata:/app/data rubika-bot-studio
 | متغیر | پیش‌فرض | توضیح |
 |---|---|---|
 | `PORT` | `8000` | پورت سرور |
-| `RUBIKA_API_BASE` | `https://botapi.rubika.ir/v1` | بیس API روبیکا |
+| `RUBIKA_API_BASE` | `https://botapi.rubika.ir/v3` | بیس API روبیکا |
 | `CORS_ORIGINS` | `*` | دامنه‌های مجاز (در محصول واقعی محدود کن) |
 | `DATA_FILE` | `./bots_data.json` | مسیر ذخیره تنظیمات |
 | `POLL_INTERVAL` | `0.6` | فاصله پولینگ (ثانیه) |
